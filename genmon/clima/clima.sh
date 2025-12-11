@@ -1,18 +1,20 @@
 #!/bin/bash
 
    ### Configurações ###
-# Apenas troca o nome da cidade que esta entre ""
+# Apenas troca o nome da cidade que esta entre "" sem acentos
 CIDADE="Campinas"
+REGIAO="Sao Paulo" 
 
    ### Busca e tratamento dos dados ###
 # Busca dos dados
 DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1")
 
-   ### Verificar se os dados são da cidade correta
-# Verificando a cidade
-DADOS_CIDADE=$(echo $DADOS | jq -r ".nearest_area[0].areaName[0].value")
+   ### Verificações ###
+# Verificando a cidade e região
+DADOS_CIDADE=$(echo "$DADOS" | jq -r ".nearest_area[0].areaName[0].value")
+DADOS_REGIAO=$(echo "$DADOS" | jq -r ".nearest_area[0].region[0].value")
 
-if [ $DADOS_CIDADE == $CIDADE ]; then
+if [ "$DADOS_CIDADE" == "$CIDADE"  ]; then
    : # Tudo certo até aqui
 else
    echo "<txt>Erro...</txt>"
@@ -20,7 +22,7 @@ else
    exit 1 # Para o script, ja que tem um erro
 fi
 
-### Caso esteja sem internt apenas exibe "Erro"
+# Caso esteja sem internt apenas exibe "Erro"
 if [ -z "$DADOS" ]; then
     # echo "<txt>Erro.</txt>"
     # echo "<tool>Sem conexão</tool>"
@@ -29,6 +31,7 @@ if [ -z "$DADOS" ]; then
     exit 1
 fi
 
-echo $DADOS_CIDADE
+
+echo "$DADOS_CIDADE"
 
 
