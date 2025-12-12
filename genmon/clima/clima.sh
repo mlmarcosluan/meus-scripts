@@ -7,8 +7,9 @@ REGIAO="Sao Paulo"
 
    ### Busca e tratamento dos dados ###
 # Busca dos dados
-DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1")
-TEMP_C=$(echo "$DADOS" | jq -r ".current_condition[0].temp_C")
+DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1") # Dados completos do wttr.in
+TEMP_C=$(echo "$DADOS" | jq -r ".current_condition[0].temp_C") # Temperatura em graus celsius
+CLIMA_ATUAL=$(echo "$DADOS" | jq -r ".current_condition[0].weatherDesc[0].value")
 
 
    ### Verificações ###
@@ -33,8 +34,11 @@ if [ -z "$DADOS" ]; then
     exit 1
 fi
 
+   ### Dicionario de tradução do climas para português
+# Clear > Limpo
 
    ### Saídas genmon
 echo "<txt>${CIDADE}, ${TEMP_C}°</txt>"
+echo "<tool>Clima atual: ${CLIMA_ATUAL}.</tool>"
 
 
