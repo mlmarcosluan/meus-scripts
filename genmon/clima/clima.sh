@@ -8,6 +8,8 @@ REGIAO="Sao Paulo"
    ### Busca e tratamento dos dados ###
 # Busca dos dados
 DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1")
+TEMP_C=$(echo "$DADOS" | jq -r ".current_condition[0].temp_C")
+
 
    ### Verificações ###
 # Verificando a cidade e região
@@ -32,6 +34,7 @@ if [ -z "$DADOS" ]; then
 fi
 
 
-echo "$DADOS_CIDADE"
+   ### Saídas genmon
+echo "<txt>${CIDADE}, ${TEMP_C}°</txt>"
 
 
