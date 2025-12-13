@@ -37,9 +37,10 @@ fi
    ### Dicionario de tradução do climas para português
 # Clear > Limpo
 # Partly cloudy > Parcialmente nublado
+# Light rain shower > Chuva fraca
 
    ### Saídas genmon
-echo "<txt>${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt>"
+echo "<icon>weather-clear</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt>"
 echo "<tool>Temperatura atual: ${TEMP_C}°, Sensção termíca: ${SENSA_TERMICA}°
 Clima atual: ${CLIMA_ATUAL}.</tool>"
 
