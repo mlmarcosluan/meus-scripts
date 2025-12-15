@@ -34,6 +34,31 @@ if [ -z "$DADOS" ]; then
     exit 1
 fi
 
+    ### Escolha do icone ###   
+# Verificação de qual icone deverá aparecer no painel
+
+code=$(echo "$DADOS" | jq -r ".current_condition[0].weatherCode")
+
+case $code in
+    113) # Sol/Limpo
+        ICON="weather-clear" 
+        ;;
+    116|119|122) # Nuvens
+        ICON="weather-overcast" 
+        ;;
+    143|248|260) # Neblina
+        ICON="weather-fog"
+        ;;
+    386|389|392|395|200) # Chuvas fortes
+        ICON="weather-storm"
+        ;;
+    179|227|230|323|326|329|332|335|338|368|371) # Agrupando todos os códigos de neve/gelo
+        ICON="weather-snow"
+        ;;
+    *) # Qualquer outra coisa geralmente é chuva ou variações de chuva
+        ICON="weather-showers" 
+        ;;
+esac
 
 
    ### Saídas genmon
