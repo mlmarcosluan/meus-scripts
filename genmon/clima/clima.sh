@@ -62,7 +62,7 @@ esac
 
 
    ### Saídas genmon
-echo "<icon>$ICON</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt>"
+echo "<icon>$ICON</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt><txtclick>gnome-weather</txtclick>"
 echo "<tool>Temperatura atual: ${TEMP_C}°, Sensção termíca: ${SENSA_TERMICA}°
 Clima atual: ${CLIMA_ATUAL}.</tool>"
 
