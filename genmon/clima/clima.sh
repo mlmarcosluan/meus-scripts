@@ -7,9 +7,9 @@ REGIAO="Sao Paulo"
 
    ### Busca e tratamento dos dados ###
 # Busca dos dados
-DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1") # Dados completos do wttr.in
+DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1&lang=pt") # Dados completos do wttr.in
 TEMP_C=$(echo "$DADOS" | jq -r ".current_condition[0].temp_C") # Temperatura em graus celsius
-CLIMA_ATUAL=$(echo "$DADOS" | jq -r ".current_condition[0].weatherDesc[0].value")
+CLIMA_ATUAL=$(echo "$DADOS" | jq -r ".current_condition[0].lang_pt[0].value")
 SENSA_TERMICA=$(echo "$DADOS" | jq -r ".current_condition[0].FeelsLikeC")
 
    ### Verificações ###
@@ -34,13 +34,10 @@ if [ -z "$DADOS" ]; then
     exit 1
 fi
 
-   ### Dicionario de tradução do climas para português
-# Clear > Limpo
-# Partly cloudy > Parcialmente nublado
-# Light rain shower > Chuva fraca
+
 
    ### Saídas genmon
-echo "<icon>weather-clear</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt>"
+echo "<icon>$ICON</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt>"
 echo "<tool>Temperatura atual: ${TEMP_C}°, Sensção termíca: ${SENSA_TERMICA}°
 Clima atual: ${CLIMA_ATUAL}.</tool>"
 
