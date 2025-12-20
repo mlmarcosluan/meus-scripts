@@ -1,69 +1,65 @@
 #!/bin/bash
 
-   ### Configurações ###
-# Apenas troca o nome da cidade que esta entre "" sem acentos
-CIDADE="Campinas"
-REGIAO="Sao Paulo" 
+   ### Busca e tratamento dos dados
+get_dados(){
+    # Variáveis locais
+    local cidade="$1" 
+    local dados=$(curl -s --max-time 30 "https://wttr.in/${cidade}?format=j1&lang=pt") # Dados completos do wttr.in
+    local temp_c=$(echo "$dados" | jq -r ".current_condition[0].temp_C") # Temperatura em graus celsius
+    local clima_atual=$(echo "$dados" | jq -r ".current_condition[0].lang_pt[0].value")
+    local sensa_termica=$(echo "$dados" | jq -r ".current_condition[0].FeelsLikeC")
+    local code=$(echo "$dados" | jq -r ".current_condition[0].FeelsLikeC")
 
-   ### Busca e tratamento dos dados ###
-# Busca dos dados
-DADOS=$(curl -s --max-time 30 "https://wttr.in/${CIDADE}?format=j1&lang=pt") # Dados completos do wttr.in
-TEMP_C=$(echo "$DADOS" | jq -r ".current_condition[0].temp_C") # Temperatura em graus celsius
-CLIMA_ATUAL=$(echo "$DADOS" | jq -r ".current_condition[0].lang_pt[0].value")
-SENSA_TERMICA=$(echo "$DADOS" | jq -r ".current_condition[0].FeelsLikeC")
+    echo "${temp_c}|${clima_atual}|${sensa_termica}|${code}" # Saida da função
 
-   ### Verificações ###
-# Verificando a cidade e região
-DADOS_CIDADE=$(echo "$DADOS" | jq -r ".nearest_area[0].areaName[0].value")
-DADOS_REGIAO=$(echo "$DADOS" | jq -r ".nearest_area[0].region[0].value")
+}
+   
+   ### Escolha do icone
+get_icon(){
+    local code="$1"
 
-if [ "$DADOS_CIDADE" == "$CIDADE"  ]; then
-   : # Tudo certo até aqui
-else
-   echo "<txt>Erro...</txt>"
-   echo "<tool>Conflito entre a cidade alvo e a cidade alcançada, deveria ser ${CIDADE}, mas é ${DADOS_CIDADE}.</tool>"
-   exit 1 # Para o script, ja que tem um erro
+    case $code in
+        113) # Sol/Limpo
+            icon="weather-clear" 
+            ;;
+        116|119|122) # Nuvens
+            icon="weather-overcast" 
+            ;;
+        143|248|260) # Neblina
+            icon="weather-fog"
+            ;;
+        386|389|392|395|200) # Chuvas fortes
+            icon="weather-storm"
+            ;;
+        179|227|230|323|326|329|332|335|338|368|371) # Agrupando todos os códigos de neve/gelo
+            icon="weather-snow"
+            ;;
+        *) # Qualquer outra coisa geralmente é chuva ou variações de chuva
+            icon="weather-showers" 
+            ;;
+    esac
+
+    echo "$icon"
+}
+
+main(){
+
+       ### Variaveis Locais
+    local cidade="Sao_Paulo"
+    local icon
+
+    # Pega os dados necessários
+    IFS="|" read -r temp_c clima_atual sensa_termica code <<< $(get_dados "$cidade")
+
+    # Ecolha do icone
+    icon=$(get_icon "code")
+
+       ### Saídas genmon
+    echo "<icon>$icon</icon><txt> ${cidade}, ${temp_c}°/${sensa_termica}°</txt><txtclick>gnome-weather</txtclick>"
+    echo "<tool>Temperatura atual: ${temp_c}°, Sensção termíca: ${sensa_termica}°
+    Clima atual: ${clima_atual}.</tool>"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
 fi
-
-# Caso esteja sem internt apenas exibe "Erro"
-if [ -z "$DADOS" ]; then
-    # echo "<txt>Erro.</txt>"
-    # echo "<tool>Sem conexão</tool>"
-    # exit 1
-    echo "Erro."
-    exit 1
-fi
-
-    ### Escolha do icone ###   
-# Verificação de qual icone deverá aparecer no painel
-
-code=$(echo "$DADOS" | jq -r ".current_condition[0].weatherCode")
-
-case $code in
-    113) # Sol/Limpo
-        ICON="weather-clear" 
-        ;;
-    116|119|122) # Nuvens
-        ICON="weather-overcast" 
-        ;;
-    143|248|260) # Neblina
-        ICON="weather-fog"
-        ;;
-    386|389|392|395|200) # Chuvas fortes
-        ICON="weather-storm"
-        ;;
-    179|227|230|323|326|329|332|335|338|368|371) # Agrupando todos os códigos de neve/gelo
-        ICON="weather-snow"
-        ;;
-    *) # Qualquer outra coisa geralmente é chuva ou variações de chuva
-        ICON="weather-showers" 
-        ;;
-esac
-
-
-   ### Saídas genmon
-echo "<icon>$ICON</icon><txt> ${CIDADE}, ${TEMP_C}°/${SENSA_TERMICA}°</txt><txtclick>gnome-weather</txtclick>"
-echo "<tool>Temperatura atual: ${TEMP_C}°, Sensção termíca: ${SENSA_TERMICA}°
-Clima atual: ${CLIMA_ATUAL}.</tool>"
-
-
