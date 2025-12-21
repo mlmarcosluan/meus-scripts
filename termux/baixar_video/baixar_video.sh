@@ -64,10 +64,8 @@ get_escolha(){
     # Troca o json pela palavra
     formato=$(tratar_escolha "$formato")
 
-    echo "${tipo}|${formato}" # Saida da função
-   
+    echo "${tipo}|${formato}" # Saida da função 
 }
-
 
        # Função Principal
 main(){
