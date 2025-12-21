@@ -40,7 +40,8 @@ main(){
     # Verifica dependencias
     verificar_dependecia
 
-    
+    read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
+    echo ""
 
 
 }
