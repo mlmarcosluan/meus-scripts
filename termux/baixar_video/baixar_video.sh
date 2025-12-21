@@ -47,6 +47,8 @@ get_escolha(){
     # Variáveis locais
     local tipo
     local formato
+    local resolucao
+    local altura
 
     # Escolha do tipo de download
     tipo=$(termux-dialog radio -v "Vídeo e Áudio, Só Vídio, Só Áudio" -t "Selecione o Tipo de Download.")
@@ -61,11 +63,28 @@ get_escolha(){
     else
         formato=$(termux-dialog radio -v "MP3, WebM, M4A")
     fi
-    
+
     # Troca o json pela palavra
     formato=$(tratar_escolha "$formato")
 
-    echo "${tipo}|${formato}" # Saida da função 
+    # Escolha da resolução do vídeo
+    if [ "$tipo" != "Só Áudio" ]; then # Ou seja vamos baixar Vídeo
+        resolucao=$(termux-dialog radio -v "Melhor Disponível,2160p (4K),1440p (2K),1080p,720p,480p,360p" -t "Selecione a Resolução do Vídeo.")
+        resolucao=$(tratar_escolha "$resolucao") # Converte o json em uma frase/palavra
+
+        # Converter texto para número (altura) para o yt-dlp
+        case "$resolucao" in
+            "2160p (4K)") altura="2160" ;;
+            "1440p (2K)") altura="1440" ;;
+            "1080p")      altura="1080" ;;
+            "720p")       altura="720" ;;
+            "480p")       altura="480" ;;
+            "360p")       altura="360" ;;
+            *)            altura="" ;; # Melhor Disponível
+        esac
+    fi
+
+    echo "${tipo}|${formato}|${altura}" # Saida da função 
 }
 
        # Função Principal
@@ -74,6 +93,7 @@ main(){
     local link="${1:-$(termux-clipboard-get)}"
     local tipo
     local formato
+    local altura
 
     # Limpa a tela
     clear
@@ -90,8 +110,9 @@ main(){
     # Separa os resultados
     tipo=$(echo "$escolhas" | cut -d"|" -f1)
     formato=$(echo "$escolhas" | cut -d"|" -f2)
+    altura=$(echo "$escolhas" | cut -d"|" -f3)
+    
 
-    echo "Você escolheu o download de ${tipo}, no formato de ${formato}."
 
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
     echo ""
