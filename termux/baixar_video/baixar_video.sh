@@ -60,7 +60,8 @@ get_escolha(){
         formato=$(termux-dialog radio -v "MP4, WebM, MKV")
     else
         formato=$(termux-dialog radio -v "MP3, WebM, M4A")
-
+    fi
+    
     # Troca o json pela palavra
     formato=$(tratar_escolha "$formato")
 
