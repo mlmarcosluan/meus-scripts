@@ -21,6 +21,7 @@ verificar_dependecia(){
 
     # Verifica quantos pacotes estão faltando, >= 1 avisa e encerra o script
     if [ "$erros" -ge 1 ];then
+        echo ""
         echo "---------------------------"
         echo "Erro Crítico: Foram encontrados $erros pacotes faltando."
         echo "Instale-os e tente novamente."
@@ -32,10 +33,12 @@ verificar_dependecia(){
        # Função Principal
 main(){
     # Variáveis locais
-    #local link="${1:-$(termux-clipboard-get)}"
+    local link="${1:-$(termux-clipboard-get)}"
     # Limpa a tela
     clear
     echo "--- Downloader Termux ---"
+    echo ""
+    echo "$link"
 
     # Verifica dependencias
     verificar_dependecia
