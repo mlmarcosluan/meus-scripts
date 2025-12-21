@@ -2,8 +2,12 @@
 
        # Verifica se o yt-dlp está instalado
 verificar_dependecia(){
+    # Variáveis locais
+    local dependencias
+    local erros
+    local pacote
     
-    dependencias="yt-dlp termux-clipboard-get" # Usei o termux-clipboard para verificar se o termux-api está instalado
+    dependencias="yt-dlp termux-clipboard-get ffmpeg jq" # Usei o termux-clipboard para verificar se o termux-api está instalado
     erros=0 # Contador de pacotes faltando
 
     # For para passar por todas as dependencias
@@ -30,18 +34,65 @@ verificar_dependecia(){
 }
 # -------
 
+       # Função que recebe i JSON e devolve apenas o valor
+tratar_escolha(){
+    # Variáveis locais
+    local json="$1"
+    echo "$json" | jq -r ".text"
+}
+# -------
+
+       # Função das escolhas das opções de download
+get_escolha(){
+    # Variáveis locais
+    local tipo
+    local formato
+
+    # Escolha do tipo de download
+    tipo=$(termux-dialog radio -v "Vídeo e Áudio, Só Vídio, Só Áudio" -t "Selecione o Tipo de Download.")
+    # troca o json pela palavra escolhida
+    tipo=$(tratar_escolha "$tipo")
+
+    # Escolha dos formatos dependendo da escolha anterior
+    if [ "$tipo" == "Vídeo e Áudio" ]; then
+        formato=$(termux-dialog radio -v "MP4, WebM, MKV")
+    elif [ "$tipo" == "Só Vídio" ]; then
+        formato=$(termux-dialog radio -v "MP4, WebM, MKV")
+    else
+        formato=$(termux-dialog radio -v "MP3, WebM, M4A")
+
+    # Troca o json pela palavra
+    formato=$(tratar_escolha "$formato")
+
+    echo "${tipo}|${formato}" # Saida da função
+   
+}
+
+
        # Função Principal
 main(){
     # Variáveis locais
     local link="${1:-$(termux-clipboard-get)}"
+    local tipo
+    local formato
+
     # Limpa a tela
     clear
     echo "--- Downloader Termux ---"
     echo ""
-    echo "$link"
+    
 
     # Verifica dependencias
     verificar_dependecia
+
+    # Escolha do tipo de download e do formato do video
+    escolhas=$(get_escolha)
+
+    # Separa os resultados
+    tipo=$(echo "$escolhas" | cut -d"|" -f1)
+    formato=$(echo "$escolhas" | cut -d"|" -f2)
+
+    echo "Você escolheu o download de ${tipo}, no formato de ${formato}."
 
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
     echo ""
