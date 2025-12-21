@@ -2,11 +2,9 @@
 
 echo "Hello Word."
 
-# Para impedirmos que o terminal feche logo após mostrar a menssagem vamos usar o read com os seguintes opções:
+escolha=$(termux-dialog radio -v "Video, Audio" -t "Selecione")
 
-# -n 1: aceita apenas 1 caractere
-# -s: não mostra o caractere na tela (silent)
-# -r: trata a barra invertida como caractere normal
-# -p: mensagem
+echo "$escolha"
+
 read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
 echo ""
