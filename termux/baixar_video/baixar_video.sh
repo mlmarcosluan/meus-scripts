@@ -14,10 +14,10 @@ verificar_dependecia(){
     for pacote in $dependencias; do
         if ! command -v "$pacote" &> /dev/null; then
             if [[ "$pacote" == "termux-clipboard-get" ]];then 
-                echo "termux-api não encontrado. Instale com \"pkg install termux-api\"."
+                termux-dialog confirm -t "Erro de Dependência" -i "O termux-api não está instalado."
                 ((erros++)) # Aumenta o contador de pacotes faltando
             else
-                echo "$pacote não encontrado. Instale com \"pkg install ${pacote}\"."
+                termux-dialog confirm -t "Erro de Dependência" -i "O $pacote não está instalado"
                 ((erros++)) # Aumenta o contador de pacotes faltando
             fi
         fi
@@ -25,10 +25,7 @@ verificar_dependecia(){
 
     # Verifica quantos pacotes estão faltando, >= 1 avisa e encerra o script
     if [ "$erros" -ge 1 ];then
-        echo ""
-        echo "---------------------------"
-        echo "Erro Crítico: Foram encontrados $erros pacotes faltando."
-        echo "Instale-os e tente novamente."
+        termux-dialog confirm -t "Erro de Dependência" -i "$erros pacotes não instalado(s)."
         exit 1
     fi
 }
@@ -89,7 +86,7 @@ get_escolha(){
 
 # -------
 
-       # Função que "cria" o comando do download
+       # Função que constroi o comando do download
 argumetos_cmd(){
     local tipo="$1"
     local formato="$2"
@@ -106,13 +103,13 @@ argumetos_cmd(){
         fi
     else # Video e Áudio
         if [ -n "$altura" ]; then # Altura definida
-            cmd="bestvideo[height<=${altura}]+bestaudio/best[height<=${altura}] --merge-output-format $formato"
+            cmd="yt-dlp -f bestvideo[height<=${altura}]+bestaudio/best[height<=${altura}] --merge-output-format $formato"
         else
-            cmd="bestvideo+bestaudio/best --merge-output-format $formato"
+            cmd="yt-dlp -f bestvideo+bestaudio/best --merge-output-format $formato"
         fi
     fi
 
-    echo "$cmd"
+    echo "$cmd -o \"/sdcard/Download/%(title)s.%(ext)s\""
 }
 
 # ------
@@ -127,10 +124,7 @@ main(){
 
     # Limpa a tela
     clear
-    echo "--- Downloader Termux ---"
-    echo ""
     
-
     # Verifica dependencias
     verificar_dependecia
 
@@ -142,11 +136,16 @@ main(){
     formato=$(echo "$escolhas" | cut -d"|" -f2)
     altura=$(echo "$escolhas" | cut -d"|" -f3)
 
-    # Iniciar download
+    # Construir comando
     cmd=$(argumetos_cmd tipo formato altura)
 
-    echo "$cmd"
+    # Iniciar download
+    eval $cmd --no-mtime \"link\"
 
+    # Captura o código de download
+    
+
+    echo "Caso o download não começar verifique se o termux tem acesso aos arquivos."
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
     echo ""
 
