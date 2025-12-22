@@ -138,9 +138,10 @@ main(){
 
     # Construir comando
     cmd=$(argumetos_cmd $tipo $formato $altura)
+    
 
     # Iniciar download
-    eval $cmd --no-mtime \"link\"
+    eval $cmd --no-mtime \"$link\"
 
     # Captura o código de download
 
