@@ -87,6 +87,36 @@ get_escolha(){
     echo "${tipo}|${formato}|${altura}" # Saida da função 
 }
 
+# -------
+
+       # Função que "cria" o comando do download
+argumetos_cmd(){
+    local tipo="$1"
+    local formato="$2"
+    local altura="$3"
+    local cmd
+
+    if [ "$tipo" == "Só Áudio" ]; then
+        cmd="yt-dlp -x --audio-format $formato"
+    elif [ "$tipo" == "Só Vídeo" ]; then
+        if [ -n "$altura" ]; then # Resolução de video escolhida
+            cmd="yt-dlp -f \"bestvideo[height<=${altura}]\" --remux-video $formato"
+        else
+            cmd="yt-dlp -f \"bestvideo\" --remux-video $formato"
+        fi
+    else # Video e Áudio
+        if [ -n "$altura" ]; then # Altura definida
+            cmd="bestvideo[height<=${altura}]+bestaudio/best[height<=${altura}] --merge-output-format $formato"
+        else
+            cmd="bestvideo+bestaudio/best --merge-output-format $formato"
+        fi
+    fi
+
+    echo "$cmd"
+}
+
+# ------
+
        # Função Principal
 main(){
     # Variáveis locais
@@ -111,8 +141,11 @@ main(){
     tipo=$(echo "$escolhas" | cut -d"|" -f1)
     formato=$(echo "$escolhas" | cut -d"|" -f2)
     altura=$(echo "$escolhas" | cut -d"|" -f3)
-    
 
+    # Iniciar download
+    cmd=$(argumetos_cmd tipo formato altura)
+
+    echo "$cmd"
 
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
     echo ""
