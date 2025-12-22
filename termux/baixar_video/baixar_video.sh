@@ -103,9 +103,9 @@ argumetos_cmd(){
         fi
     else # Video e Áudio
         if [ -n "$altura" ]; then # Altura definida
-            cmd="yt-dlp -f bestvideo[height<=${altura}]+bestaudio/best[height<=${altura}] --merge-output-format $formato"
+            cmd="yt-dlp -f \"bestvideo[height<=${altura}]+bestaudio/best[height<=${altura}]\" --merge-output-format $formato"
         else
-            cmd="yt-dlp -f bestvideo+bestaudio/best --merge-output-format $formato"
+            cmd="yt-dlp -f \"bestvideo+bestaudio/best\" --merge-output-format $formato"
         fi
     fi
 
@@ -141,7 +141,7 @@ main(){
     
 
     # Iniciar download
-    echo "$cmd" 
+    eval "$cmd" 
 
     # Captura o código de download
 
