@@ -54,11 +54,11 @@ get_escolha(){
 
     # Escolha dos formatos dependendo da escolha anterior
     if [ "$tipo" == "Vídeo e Áudio" ]; then
-        formato=$(termux-dialog radio -v "MP4, WebM, MKV")
+        formato=$(termux-dialog radio -v "mp4, webm, mkv")
     elif [ "$tipo" == "Só Vídio" ]; then
-        formato=$(termux-dialog radio -v "MP4, WebM, MKV")
+        formato=$(termux-dialog radio -v "mp4, webm, mkv")
     else
-        formato=$(termux-dialog radio -v "MP3, WebM, M4A")
+        formato=$(termux-dialog radio -v "mp4, webm, mkv")
     fi
 
     # Troca o json pela palavra
