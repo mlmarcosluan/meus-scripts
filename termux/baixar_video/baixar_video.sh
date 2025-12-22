@@ -137,13 +137,13 @@ main(){
     altura=$(echo "$escolhas" | cut -d"|" -f3)
 
     # Construir comando
-    cmd=$(argumetos_cmd tipo formato altura)
+    cmd=$(argumetos_cmd $tipo $formato $altura)
 
     # Iniciar download
     eval $cmd --no-mtime \"link\"
 
     # Captura o código de download
-    
+
 
     echo "Caso o download não começar verifique se o termux tem acesso aos arquivos."
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
