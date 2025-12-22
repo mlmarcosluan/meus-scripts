@@ -137,11 +137,11 @@ main(){
     altura=$(echo "$escolhas" | cut -d"|" -f3)
 
     # Construir comando
-    cmd=$(argumetos_cmd "$tipo" "$formato" "$altura")
+    cmd="$(argumetos_cmd "$tipo" "$formato" "$altura") --no-mtime \"$link\""
     
 
     # Iniciar download
-    eval $cmd --no-mtime \"$link\"
+    eval $cmd 
 
     # Captura o código de download
 
