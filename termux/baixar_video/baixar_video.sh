@@ -141,7 +141,7 @@ main(){
     
 
     # Iniciar download
-    eval $cmd 
+    echo "$cmd" 
 
     # Captura o código de download
 
