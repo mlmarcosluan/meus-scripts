@@ -137,7 +137,7 @@ main(){
     altura=$(echo "$escolhas" | cut -d"|" -f3)
 
     # Construir comando
-    cmd=$(argumetos_cmd $tipo $formato $altura)
+    cmd=$(argumetos_cmd "$tipo" "$formato" "$altura")
     
 
     # Iniciar download
