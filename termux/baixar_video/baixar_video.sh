@@ -58,7 +58,7 @@ get_escolha(){
     elif [ "$tipo" == "Só Vídio" ]; then
         formato=$(termux-dialog radio -v "mp4, webm, mkv")
     else
-        formato=$(termux-dialog radio -v "mp4, webm, mkv")
+        formato=$(termux-dialog radio -v "mp3, m4a")
     fi
 
     # Troca o json pela palavra
@@ -142,8 +142,6 @@ main(){
 
     # Iniciar download
     eval "$cmd" 
-
-    # Captura o código de download
 
 
     echo "Caso o download não começar verifique se o termux tem acesso aos arquivos."
