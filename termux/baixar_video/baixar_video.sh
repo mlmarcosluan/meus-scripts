@@ -143,12 +143,18 @@ main(){
     # Iniciar download
     eval "$cmd" 
 
-
-    echo "Caso o download não começar verifique se o termux tem acesso aos arquivos."
+    # Verifica se o comando foi bem executado
+    if [ $? -eq 0 ]; then
+        clear # Limpar 0 terminal
+        echo "Download Comcluido...!!!"
+    else
+        clear # Limpa o terminal
+        echo "Erro no comando de download, verifique o comando: "
+        echo "$cmd"
+    fi
+    
     read -n 1 -s -r -p "Pressione qualquer tecla para continuar..."
     echo ""
-
-
 }
 
        # Execução Condicional
