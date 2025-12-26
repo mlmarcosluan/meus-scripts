@@ -157,6 +157,8 @@ main(){
     echo ""
 }
 
+# -------
+
        # Execução Condicional
 # Só roda a main se o script for executado diretamente
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
