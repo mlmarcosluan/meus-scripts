@@ -45,8 +45,9 @@ get_icon(){
 main(){
 
        ### Variaveis Locais
-    local cidade="Sao_Paulo"
+    local cidade="Campinas"
     local icon
+    local data_hora=$(date "+%A - %d/%m/%Y às %H:%M")
 
     # Pega os dados necessários
     IFS="|" read -r temp_c clima_atual sensa_termica code <<< $(get_dados "$cidade")
@@ -57,7 +58,9 @@ main(){
        ### Saídas genmon
     echo "<icon>$icon</icon><txt> ${cidade}, ${temp_c}°/${sensa_termica}°</txt><txtclick>gnome-weather</txtclick>"
     echo "<tool>Temperatura atual: ${temp_c}°, Sensção termíca: ${sensa_termica}°
-    Clima atual: ${clima_atual}.</tool>"
+    Clima atual: ${clima_atual}.
+    
+    Dados atualizados em: ${data_hora^}</tool>"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
