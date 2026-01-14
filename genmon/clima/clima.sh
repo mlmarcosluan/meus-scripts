@@ -1,5 +1,30 @@
 #!/bin/bash
 
+   ### Verifica se á alguma dependência faltando
+verificar_dependecia(){
+    local dependencias
+    local pacotes_falt
+    local icon="dialog-error"
+
+    dependencias="jq curl"
+    pacotes_falt=() # Array vazio para colocarmos os pacotes faltando
+
+    # Verifica se cada pacote necessário está instalado
+    for pacote in $dependencias; do
+        if ! command -v "$pacote" &> /dev/null; then
+            pacotes_falt+=($pacote)
+        fi
+    done
+
+    # Verifica se exite algum pacote faltando
+    if [ ${#pacotes_falt[@]} -gt 0 ]: then
+        echo "<icon>$icon</icon><txt>Erro nas dependências.</txt>"
+        echo "<toll>Esta(ão) faltando o(s) pacote(s): 
+        ${pacotes_falt[*]}</tool>"
+        exit 1
+    fi
+}
+
    ### Busca e tratamento dos dados
 get_dados(){
     # Variáveis locais
@@ -48,6 +73,8 @@ main(){
     local cidade="Campinas"
     local icon
     local data_hora=$(date "+%A - %d/%m/%Y às %H:%M")
+
+    # Primeiro é verificado se tem alguma dependência faltando
 
     # Pega os dados necessários
     IFS="|" read -r temp_c clima_atual sensa_termica code <<< $(get_dados "$cidade")
