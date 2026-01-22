@@ -7,6 +7,9 @@ id_dispositivos(){
     touch_id=$(xinput list | awk -F'id=' '/ELAN0B00:00 04F3:30EA Touchpad/ {print int($2)}')
     mouse_id=$(xinput list | awk -F'id=' '/USB Gaming Mouse/ && /pointer/ && !/Consumer Control/ {print int($2)}')
 
+    if [ -z "$mouse_id" ]; then
+        mouse_id="Desconectado"
+    fi
     echo "${touch_id}|${mouse_id}"
 }
 
