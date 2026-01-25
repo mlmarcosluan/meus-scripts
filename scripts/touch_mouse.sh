@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Função que busca os id dos dispositivos
 id_dispositivos(){
     local touch_id
     local mouse_id
@@ -13,6 +14,7 @@ id_dispositivos(){
     echo "${touch_id}|${mouse_id}"
 }
 
+# Função que verifica o estado atual do dispositivo
 estado_dispo(){
     local id_touch=$1
     local id_mouse=$2
@@ -24,7 +26,7 @@ estado_dispo(){
 
     # Estado do Mouse
     if [[ "$id_mouse" == "Desconectado" ]]; then
-        estado_mouse="Desconectado"
+        estado_mouse=0
     else
         estado_mouse=$(xinput list-props $id_mouse | grep "Device Enabled" | awk '{print $4}')
     fi
@@ -42,6 +44,21 @@ main(){
     # Estado dos dispositivos
     IFS="|" read -r estado_touch estado_mouse <<< "$(estado_dispo $touch_id $mouse_id)"
     
+    if [[ "$estado_mouse" == "1" ]]; then # Mouse estão ativado
+        if [[ "$estado_touch" == "1" ]]; then # Mouse e touch ativos
+            xinput disable $touch_id # Desativando o touch
+            notify-send -t 2000 "Touchpad" "Desativado" --icon=input-touchpad-off # Notificação
+        else # Mouse ativo e touch desativado, faz nada
+            exit 1
+        fi
+    else # Mouse desativado
+        if [[ "$estado_touch" == "0" ]]; then # Mouse e touch desativado
+            xinput enable $touch_id # Ativando o touch
+            notify-send -t 2000 "Touchpad" "Ativado" --icon=input-touchpad-on # Notificação
+        else # Mouse desativado e touch ativado, faz nada
+            exit 1
+        fi
+    fi
 }
 
 
