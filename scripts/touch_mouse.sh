@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# --- CONFIGURAÇÕES DE AMBIENTE (Crucial para Udev) ---
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+export DISPLAY=:0
+export XAUTHORITY=/home/marcos/.Xauthority
+
+# Pega o ID do usuário 'marcos' para achar o endereço do DBUS correto
+USER_ID=$(id -u marcos)
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${USER_ID}/bus"
+
+sleep 2
+
 # Função que busca os id dos dispositivos
 id_dispositivos(){
     local touch_id
@@ -65,3 +76,11 @@ main(){
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi
+
+
+# Configurações
+# Crie a regra em /etc/udev/ruler.d
+# Exemplo de regra:
+# sudo nano /etc/udev/rules.d/99-touchpad-control.rules
+# Dentro do arquivo digite:
+# ACTION=="add|remove", SUBSYSTEM=="input", KERNEL=="mouse*", RUN+="/usr/bin/sudo -u marcos /bin/bash /home/caminho/completo/script.sh"
