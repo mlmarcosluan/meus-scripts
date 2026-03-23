@@ -12,9 +12,10 @@ import socket  # Biblioteca para lidar com conexões de rede de baixo nível
 
 def ip_rede():
     """
-    Descobre o endereço IP da rede atual
+    Descobre o endereço IP da rede atual, calcula a sub-rede /24 e já retorna o objeto válido
+    pelo ipaddress
     """
-
+    # 1. Descobre o IP
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # AF_INET: Usaremos protocolo IPv4, SOCK_DGRAM: Usaremos UDP (sem conexão completa)
     try:
         s.connect(("8.8.8.8", 1)) # Conexão "falsa" com DNS do google apenas para as informações
@@ -24,7 +25,13 @@ def ip_rede():
     finally: # Idependente do resutado acima ele encerra a conexão
         s.close()
 
-    return ip # Retorna ip
+    # 2. Transforma IP (ex.: 192.168.1.15 -> 192.168.1.0/24)
+    rede_str = ip.rsplit(".", 1)[0] + ".0/24"
+
+    # Válida a rede com o ipaddress
+    rede = ipaddress.ip_network(rede_str, strict=False)
+
+    return rede # Retorna a rede ja validada
 
 def main():
     """Função principal, onde o script começa"""
