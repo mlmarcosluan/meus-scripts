@@ -7,8 +7,9 @@ Data: 2026
 
 import sys # Fornece acesso a variáveis e funções do sistema
 import ipaddress # Biblioteca para validar, manipular e iterar sobre endereços de rede e sub-redes
-from scapy.all import ARP, Ether, srp # Importa classes para criar pacotes ARP, frames Ethernet e a função de envio/recebimento em Camada 2
+from scapy.all import ARP, Ether, srp # Importa classes para criar pacotes ARP, frames Ethernet e a função de envio e recebimento em Camada 2
 import socket  # Biblioteca para lidar com conexões de rede de baixo nível
+import nmap # Biblioteca para fazer a varredura da rede
 
 def ip_rede():
     """
@@ -58,6 +59,25 @@ def scanear(rede_alvo):
     return mapeamento_rede
         
 
+def scan_portas(ip_alvo):
+    
+    nm = nmap.PortScanner() # Objeto que vai controlar a varredura
+
+    # 1. Faz o scan primeiro
+    nm.scan(hosts=ip_alvo, arguments="-p 22,80,443,8080 -sV -T4")
+
+    # 2. Verifica se a chave do ip existe no dicionário
+    if ip_alvo in nm.all_hosts(): # ip_alvo está no dicionário
+
+        # 3. Pega as informações
+        estado = nm[ip_alvo]["status"]["state"]
+    else: # ip_alvo não está no dicionário
+        estado = "Fechado"
+    
+    return estado
+    nm.scan(hosts=ip_alvo, arguments="-p 22,80,443,8080 -sV -T4")
+    print(nm[ip_alvo]["status"]["state"])
+
 def main():
     """Função principal, onde o script começa"""
     # Define a rede a ser análisada
@@ -72,3 +92,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n[!] Saindo...")
         sys.exit(0)
+
+
+
+scan_portas("192.168.1.26")
+estado = scan_portas("192.168.1.1")
