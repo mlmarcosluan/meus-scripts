@@ -57,10 +57,8 @@ def scanear(rede_alvo):
         mapeamento_rede[ip_encontrado] = mac_encontrado
     
     return mapeamento_rede
-        
-
+      
 def scan_portas(ip_alvo):
-    
     nm = nmap.PortScanner() # Objeto que vai controlar a varredura
 
     # 1. Faz o scan primeiro
@@ -75,25 +73,16 @@ def scan_portas(ip_alvo):
         estado = "Fechado"
     
     return estado
-    nm.scan(hosts=ip_alvo, arguments="-p 22,80,443,8080 -sV -T4")
-    print(nm[ip_alvo]["status"]["state"])
-
+    
 def main():
     """Função principal, onde o script começa"""
     # Define a rede a ser análisada
     rede = ip_rede()
     mapeamento_rede = scanear(rede)
-
     
-
 if __name__ == "__main__":
     try: # Adicionado um try/except para caso o script seja interrompido não tenha mensagem de erros
         main()
     except KeyboardInterrupt:
         print("\n[!] Saindo...")
         sys.exit(0)
-
-
-
-scan_portas("192.168.1.26")
-estado = scan_portas("192.168.1.1")
