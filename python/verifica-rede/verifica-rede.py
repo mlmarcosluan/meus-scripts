@@ -53,32 +53,65 @@ def scanear(rede_alvo):
         ip_encontrado = pacote_recebido.psrc
         mac_encontrado = pacote_recebido.hwsrc
 
+        # 4. Faz scan de portas do ip_encontrando
+        portas, mac, fabricante = scan_ip(ip_encontrado)
+
         # Adiciona ao dicionário
-        mapeamento_rede[ip_encontrado] = mac_encontrado
-    
+        mapeamento_rede[ip_encontrado] = {} # Subdicionário
+        mapeamento_rede[ip_encontrado]["Portas abertas"] = portas
+        mapeamento_rede[ip_encontrado]["mac"] = mac
+        mapeamento_rede[ip_encontrado]["Fabricante"] = fabricante
+        
     return mapeamento_rede
       
-def scan_portas(ip_alvo):
+def scan_ip(ip_alvo):
     nm = nmap.PortScanner() # Objeto que vai controlar a varredura
 
     # 1. Faz o scan primeiro
-    nm.scan(hosts=ip_alvo, arguments="-p 22,80,443,8080 -sV -T4")
+    scan_ip_res = nm.scan(hosts=ip_alvo, arguments="-p 22,80,443,8080 -sV -T4")
 
     # 2. Verifica se a chave do ip existe no dicionário
     if ip_alvo in nm.all_hosts(): # ip_alvo está no dicionário
 
-        # 3. Pega as informações
-        estado = nm[ip_alvo]["status"]["state"]
+        # 3. Pega as informações de portas abertas
+        portas = []
+
+        # Porta 22
+        if scan_ip_res["scan"][ip_alvo]["tcp"][22]["state"] == "open":
+            portas.append(22)
+        
+        # Porta 80
+        if scan_ip_res["scan"][ip_alvo]["tcp"][80]["state"] == "open":
+            portas.append(80)
+        
+        # Porta 443
+        if scan_ip_res["scan"][ip_alvo]["tcp"][443]["state"] == "open":
+            portas.append(443)
+        
+        # Porta 8080
+        if scan_ip_res["scan"][ip_alvo]["tcp"][8080]["state"] == "open":
+            portas.append(8080)
+        
+        # 4. Pega o mac e o fabricante
+        mac = scan_ip_res["scan"][ip_alvo]["addresses"]["mac"]
+        if scan_ip_res["scan"][ip_alvo]["vendor"] != {}: # Chave não vazia
+            fabricante = scan_ip_res["scan"][ip_alvo]["vendor"][mac]
+        else: # Chave vazia
+            fabricante = "Desconhecido"
+
+        # 5. Retorna as informações
+        return portas, mac, fabricante
+
     else: # ip_alvo não está no dicionário
-        estado = "Fechado"
+        return [], "Sem Informação", "Sem Informação"
     
-    return estado
     
 def main():
     """Função principal, onde o script começa"""
     # Define a rede a ser análisada
     rede = ip_rede()
     mapeamento_rede = scanear(rede)
+    
     
 if __name__ == "__main__":
     try: # Adicionado um try/except para caso o script seja interrompido não tenha mensagem de erros
