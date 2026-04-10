@@ -3,10 +3,10 @@
 # --- CONFIGURAÇÕES DE AMBIENTE (Crucial para Udev) ---
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
 export DISPLAY=:0
-export XAUTHORITY=/home/marcos/.Xauthority
+export XAUTHORITY=/home/usuario/.Xauthority
 
-# Pega o ID do usuário 'marcos' para achar o endereço do DBUS correto
-USER_ID=$(id -u marcos)
+# Pega o ID do usuário 'usuario' para achar o endereço do DBUS correto
+USER_ID=$(id -u usuario)
 export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${USER_ID}/bus"
 
 sleep 2
