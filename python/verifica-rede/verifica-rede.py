@@ -104,8 +104,7 @@ def scan_ip(ip_alvo):
 
     else: # ip_alvo não está no dicionário
         return [], "Sem Informação", "Sem Informação"
-    
-    
+       
 def main():
     """Função principal, onde o script começa"""
     # Define a rede a ser análisada
